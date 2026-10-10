@@ -1,27 +1,44 @@
 import discord
 import os
+import threading
 from dotenv import load_dotenv
 
+# Setup
 load_dotenv()
 bot = discord.Bot()
 
-@bot.event
-async def on_ready():
-    print(f"{bot.user} is ready and online!")
+# Bot loader
+def get_extensions():
+    return [
+        f"cogs.{file[:-3]}"
+        for file in os.listdir("cogs")
+        if file.endswith(".py") and not file.startswith("_")
+    ]
 
-@bot.slash_command(name="ping", description="all discord bots have this")
-async def hello(ctx: discord.ApplicationContext):
-    latency = round(bot.latency * 1000)
-    embed = discord.Embed(
-        title="Pong!",
-        description=f"**Latency:** `{latency}`",
-        color=15548997
-    )
+def reload_cogs():
+    extensions = get_extensions()
 
-    embed.set_thumbnail(
-        url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9NOUAn5ffT57TkgqMyQNZ7U_2HbgXVD-GV5OdEUUtUQ&s=10"
-    )
+    for extension in extensions:
+        try:
+            if extension in bot.extensions:
+                bot.reload_extension(extension)
+                print(f"↻ Reloaded {extension}")
+            else:
+                bot.load_extension(extension)
+                print(f"+ Loaded {extension}")
 
-    await ctx.respond(embed=embed)
+        except Exception as e:
+            print(f"✗ {extension}: {e}")
 
+def input_menu():
+    while True:
+        key = input().strip().lower()
+
+        if key == "r":
+            reload_cogs()
+
+reload_cogs()
+threading.Thread(target=input_menu, daemon=True).start()
+
+# Run bot
 bot.run(os.getenv('TOKEN'))
