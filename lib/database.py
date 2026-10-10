@@ -53,12 +53,11 @@ def add_user(user_id: int):
 @can_commit
 def get_user(user_id: int):
     """Fetches an user"""
+    add_user(user_id)
+
     cursor = _conn.execute(f"""
         SELECT * FROM users WHERE user_id = ?
     """, (user_id,))
-
-    if cursor.rowcount == 0:
-        return None
 
     return format_users(cursor.fetchone())
 
