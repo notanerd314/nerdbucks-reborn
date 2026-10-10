@@ -74,3 +74,13 @@ def change_amount(user_id: int, amount: int, balance_type: BalanceType):
         SET {balance_type} = {balance_type} + ?
         WHERE user_id = ?
     """, (amount, user_id,))
+
+@can_commit
+def set_cooldown(user_id: int, action_id: str):
+    """Sets the cooldown for an user"""
+    add_user(user_id)
+
+    _conn.execute(f"""
+        INSERT OR REPLACE INTO cooldowns (user_id, action_id, last_used)
+        VALUES (?, ?, unixepoch())
+    """, (user_id, action_id))
