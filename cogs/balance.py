@@ -1,4 +1,3 @@
-
 import discord
 from discord.ext import commands
 from discord.ui import (
@@ -56,10 +55,10 @@ class BalanceView(DesignerView):
         self.rank = rank
         self.avatar_url = avatar_url
 
-        self.add_item(self.make_container(wallet, bank))
+        self.add_item(self.build(wallet, bank))
         self.add_item(BalanceViewActions(self))
 
-    def make_container(self, wallet: int, bank: int) -> Container:
+    def build(self, wallet: int, bank: int) -> Container:
         net_worth = wallet + bank
 
         return Container(
@@ -72,7 +71,7 @@ class BalanceView(DesignerView):
             ),
             Separator(),
             TextDisplay(
-                f"## Total Net Worth: {net_worth:,} 🪙\n"
+                f"**Total Net Worth:** {net_worth:,} 🪙\n"
                 f"**Wallet:** {wallet:,} 🪙\n"
                 f"**Bank:** {bank:,} 🪙"
             ),
