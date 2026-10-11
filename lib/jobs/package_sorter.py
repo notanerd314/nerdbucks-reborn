@@ -9,121 +9,15 @@ from discord.ui import (
     ActionRow,
     Button,
 )
+import json
 
-ITEMS = {
-    # 🍎 Food
-    "🍎 Apple": "🍎 Food",
-    "🍞 Bread": "🍎 Food",
-    "🍕 Pizza": "🍎 Food",
-    "🧀 Cheese": "🍎 Food",
-    "🍉 Watermelon": "🍎 Food",
-    "🍌 Banana": "🍎 Food",
-    "🥪 Sandwich": "🍎 Food",
-    "🍩 Donut": "🍎 Food",
-    "🍣 Sushi": "🍎 Food",
-    "🍫 Chocolate Bar": "🍎 Food",
-
-    # 🔧 Tools
-    "🔨 Hammer": "🔧 Tools",
-    "🪛 Screwdriver": "🔧 Tools",
-    "🔧 Wrench": "🔧 Tools",
-    "🪚 Saw": "🔧 Tools",
-    "🪏 Shovel": "🔧 Tools",
-    "🗜️ Pliers": "🔧 Tools",
-    "🛠️ Drill": "🔧 Tools",
-    "📏 Measuring Tape": "🔧 Tools",
-    "🔩 Crowbar": "🔧 Tools",
-    "🖌️ Paintbrush": "🔧 Tools",
-
-    # 👕 Clothing
-    "👕 T-shirt": "👕 Clothing",
-    "👖 Jeans": "👕 Clothing",
-    "🧥 Hoodie": "👕 Clothing",
-    "🧦 Socks": "👕 Clothing",
-    "👟 Sneakers": "👕 Clothing",
-    "🧥 Jacket": "👕 Clothing",
-    "🩳 Shorts": "👕 Clothing",
-    "🧤 Gloves": "👕 Clothing",
-    "🧣 Scarf": "👕 Clothing",
-    "🧢 Baseball Cap": "👕 Clothing",
-
-    # 📱 Electronics
-    "📱 Phone": "📱 Electronics",
-    "💻 Laptop": "📱 Electronics",
-    "⌨️ Keyboard": "📱 Electronics",
-    "🎧 Headphones": "📱 Electronics",
-    "📺 Television": "📱 Electronics",
-    "🖱️ Mouse": "📱 Electronics",
-    "📹 Webcam": "📱 Electronics",
-    "🧮 Calculator": "📱 Electronics",
-    "🎮 Game Controller": "📱 Electronics",
-    "💾 USB Drive": "📱 Electronics",
-
-    # 📚 Books & Stationery
-    "📓 Notebook": "📚 Books & Stationery",
-    "✏️ Pencil": "📚 Books & Stationery",
-    "🩹 Eraser": "📚 Books & Stationery",
-    "📘 Textbook": "📚 Books & Stationery",
-    "📎 Stapler": "📚 Books & Stationery",
-    "📏 Ruler": "📚 Books & Stationery",
-    "🖊️ Marker": "📚 Books & Stationery",
-    "✂️ Scissors": "📚 Books & Stationery",
-    "✉️ Envelope": "📚 Books & Stationery",
-    "🗒️ Sticky Notes": "📚 Books & Stationery",
-
-    # 🪑 Furniture
-    "🪑 Chair": "🪑 Furniture",
-    "🖥️ Desk": "🪑 Furniture",
-    "🛋️ Sofa": "🪑 Furniture",
-    "📚 Bookshelf": "🪑 Furniture",
-    "🛏️ Bed": "🪑 Furniture",
-    "🚪 Wardrobe": "🪑 Furniture",
-    "☕ Coffee Table": "🪑 Furniture",
-    "🗄️ Nightstand": "🪑 Furniture",
-    "🪑 Stool": "🪑 Furniture",
-    "🍽️ Dining Table": "🪑 Furniture",
-
-    # 🧴 Household Supplies
-    "🧼 Soap": "🧴 Household Supplies",
-    "🧽 Sponge": "🧴 Household Supplies",
-    "🫧 Detergent": "🧴 Household Supplies",
-    "🧻 Toilet Paper": "🧴 Household Supplies",
-    "🗑️ Trash Bag": "🧴 Household Supplies",
-    "🧹 Broom": "🧴 Household Supplies",
-    "🪣 Mop": "🧴 Household Supplies",
-    "🧴 Dishwashing Liquid": "🧴 Household Supplies",
-    "🌬️ Air Freshener": "🧴 Household Supplies",
-    "🧻 Paper Towels": "🧴 Household Supplies",
-
-    # 🧸 Toys & Games
-    "🧸 Teddy Bear": "🧸 Toys & Games",
-    "🧱 LEGO Bricks": "🧸 Toys & Games",
-    "♟️ Chess Set": "🧸 Toys & Games",
-    "🪀 Yo-yo": "🧸 Toys & Games",
-    "🦆 Rubber Duck": "🧸 Toys & Games",
-    "🚗 Toy Car": "🧸 Toys & Games",
-    "🧩 Puzzle": "🧸 Toys & Games",
-    "🃏 Playing Cards": "🧸 Toys & Games",
-    "🥏 Frisbee": "🧸 Toys & Games",
-    "🤖 Toy Robot": "🧸 Toys & Games",
-
-    # 🌿 Plants & Gardening
-    "🪴 Flower Pot": "🌿 Plants & Gardening",
-    "🌵 Cactus": "🌿 Plants & Gardening",
-    "🌱 Seeds": "🌿 Plants & Gardening",
-    "🚿 Watering Can": "🌿 Plants & Gardening",
-    "🌿 Fertilizer": "🌿 Plants & Gardening",
-    "🧤 Garden Gloves": "🌿 Plants & Gardening",
-    "✂️ Pruning Shears": "🌿 Plants & Gardening",
-    "💦 Plant Mister": "🌿 Plants & Gardening",
-    "🌷 Flower Bulbs": "🌿 Plants & Gardening",
-    "🪴 Garden Hose": "🌿 Plants & Gardening",
-}
+with open("lib/jobs/package_sorter.json", "r") as f:
+    ITEMS = json.load(f)
 
 class PackageSorterView(DesignerView):
     def __init__(self, ctx: discord.ApplicationContext):
         # Disable the built-in timeout; we manage the 15-second timer ourselves.
-        super().__init__(timeout=None)
+        super().__init__(timeout=30)
 
         self.ctx = ctx
         self.correct = 0
@@ -175,6 +69,7 @@ class PackageSorterView(DesignerView):
             self.pay += random.randint(20, 45)
         else:
             self.incorrect += 1
+            self.pay = max(0, self.pay - random.randint(10, 25))
 
         self.clear_items()
         self.add_item(self.build())
@@ -243,12 +138,9 @@ async def main(ctx: discord.ApplicationContext) -> int:
 
     # Send the minigame.
     await ctx.respond(view=view)
-
-    view.message = await ctx.interaction.original_response()
     asyncio.create_task(finish_after_delay(view, 20))
 
     return await view.result
-
 
 async def finish_after_delay(view: PackageSorterView, seconds: int):
     await asyncio.sleep(seconds)
