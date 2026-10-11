@@ -10,9 +10,5 @@ class Events(discord.Cog):
         print("NerdBucks is ready!")
         print("R to reload extensions, M to migrate database")
 
-    @discord.Cog.listener()
-    async def on_disconnect(self):
-        db.close_connection()
-
 def setup(bot: discord.Bot):
     bot.add_cog(Events(bot))
