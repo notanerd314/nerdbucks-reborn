@@ -120,9 +120,9 @@ class GuessNumberView(DesignerView):
 
         self.guesses += 1
         if guess < self.target:
-            self.status = f"**{guess}** is too low. Guess higher."
+            self.status = f"**{guess}** is too low."
         elif guess > self.target:
-            self.status = f"**{guess}** is too high. Guess lower."
+            self.status = f"**{guess}** is too high."
         else:
             self.finished = True
             self.pay = calculate_pay(self.guesses)
@@ -158,7 +158,7 @@ class GuessNumberModal(Modal):
         self.game = game
         self.guess_input = InputText(
             label=f"Your guess (0-{RANGE})",
-            placeholder="Enter a whole number",
+            placeholder="Enter a whole number, eg. 67",
             min_length=1,
             max_length=len(str(RANGE)),
         )
