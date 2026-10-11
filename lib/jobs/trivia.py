@@ -97,7 +97,7 @@ class TriviaView(DesignerView):
         question = self.questions[question_index]
         if selected_answer == question["answer"]:
             self.correct += 1
-            self.pay += random.randint(30, 45)
+            self.pay += random.randint(60, 75)
         else:
             self.incorrect += 1
 
