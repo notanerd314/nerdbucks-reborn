@@ -3,6 +3,7 @@ from discord.ext import commands
 from lib import database as db
 
 import lib.jobs.package_sorter as package_sorter
+import lib.jobs.trivia as trivia
 
 class Work(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -10,7 +11,10 @@ class Work(commands.Cog):
 
     @discord.slash_command(name="work", description="Work to earn money.")
     async def work(self, ctx: discord.ApplicationContext):
-        pay = await package_sorter.main(ctx)
+        pay = await trivia.main(ctx)
+
+        if pay is None:
+            return  # Trivia game didn't finish properly, so we don't award any money.
 
         # The game has finished; now award the money.
         db.change_amount(ctx.author.id, pay, "wallet")

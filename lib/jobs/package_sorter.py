@@ -109,7 +109,7 @@ class PackageSorterView(DesignerView):
                 f"💵 **Pay:** ${self.pay}"
             ),
             Separator(),
-            colour=discord.Colour(0x57F287),
+            colour=discord.Colour.nitro_pink(),
         )
 
         buttons = []
