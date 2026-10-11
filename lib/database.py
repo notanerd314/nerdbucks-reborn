@@ -6,9 +6,59 @@ from functools import wraps
 Path("db").mkdir(exist_ok=True)
 
 _conn = sqlite3.connect("db/db.sqlite3")
+_conn.execute("PRAGMA foreign_keys = ON")
 _conn.row_factory = sqlite3.Row
 
+migrations = Path("db/migrations")
+migrations.mkdir(parents=True, exist_ok=True)
+
 BalanceType = Literal["wallet", "bank"]
+
+# migration
+def sql_quote(value: str) -> str:
+    """Escape a string for use as a SQL literal."""
+    return "'" + value.replace("'", "''") + "'"
+
+def migrate():
+    """Apply all unapplied SQL migrations in filename order."""
+    _conn.execute("""
+        CREATE TABLE IF NOT EXISTS schema_migrations (
+            version TEXT PRIMARY KEY,
+            applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    _conn.commit()
+
+    applied = {
+        row["version"]
+        for row in _conn.execute(
+            "SELECT version FROM schema_migrations"
+        )
+    }
+
+    for path in sorted(migrations.glob("*.sql")):
+        version = path.stem
+
+        if version in applied:
+            continue
+
+        sql = path.read_text(encoding="utf-8")
+        print(f"[DB] Applying {version}...")
+
+        try:
+            _conn.executescript(
+                "BEGIN IMMEDIATE;\n"
+                + sql
+                + "\nINSERT INTO schema_migrations (version) "
+                + f"VALUES ({sql_quote(version)});\n"
+                + "COMMIT;"
+            )
+        except Exception:
+            if _conn.in_transaction:
+                _conn.rollback()
+            raise
+
+        print(f"[DB] Applied {version}")
 
 # util functions
 def can_commit(func):

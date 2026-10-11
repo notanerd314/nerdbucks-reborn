@@ -1,6 +1,7 @@
 import discord
 import os
 import threading
+from lib import database as db
 from dotenv import load_dotenv
 
 # Setup
@@ -36,6 +37,8 @@ def input_menu():
 
         if key == "r":
             reload_cogs()
+        elif key == "m":
+            db.migrate()
 
 reload_cogs()
 threading.Thread(target=input_menu, daemon=True).start()
