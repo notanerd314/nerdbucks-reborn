@@ -6,6 +6,7 @@ import json
 import traceback
 
 from lib import database as db
+from lib import util
 from groq import AsyncGroq
 
 from discord.ui import (
@@ -259,7 +260,6 @@ class BegModal(discord.ui.Modal):
             print(f"[BEG ERROR] {type(e).__name__}: {e}")
             traceback.print_exc()
 
-
 class BegView(DesignerView):
     def __init__(self, ctx: discord.ApplicationContext):
         super().__init__(timeout=180.0)
@@ -354,7 +354,6 @@ class BegView(DesignerView):
         self.finished = True
         self.clear_items()
 
-
 class Beg(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -364,13 +363,17 @@ class Beg(discord.Cog):
         description="Convince an AI to give you free money.",
     )
     async def beg(self, ctx: discord.ApplicationContext):
+        on_cooldown, remaining = db.is_on_cooldown(ctx.author.id, "beg", 20)
+        if on_cooldown:
+            await ctx.followup.send(f"how about you get off your ass and actually work? wait `{util.pretty_time(remaining)}`")
+            return
+
         view = BegView(ctx)
 
         await ctx.respond(
             view=view,
             ephemeral=False,
         )
-
 
 def setup(bot):
     bot.add_cog(Beg(bot))

@@ -100,7 +100,35 @@ async def dev_migrate(ctx: discord.ApplicationContext):
         )
         return
 
-    await ctx.followup.send("atabase migrations completed.", ephemeral=True)
+    await ctx.followup.send("database migrations completed.", ephemeral=True)
+
+
+@dev.command(name="reset-cooldowns")
+async def dev_reset_cooldowns(ctx: discord.ApplicationContext):
+    if ctx.author.id != OWNER:
+        await ctx.respond(
+            "return to this command if youre a dev",
+            ephemeral=True,
+        )
+        return
+
+    await ctx.defer(ephemeral=True)
+
+    try:
+        with db._conn:
+            db._conn.execute("DELETE FROM cooldowns")
+    except Exception as e:
+        print(f"✗ Cooldown reset failed: {e}")
+        await ctx.followup.send(
+            f"Cooldown reset failed: `{type(e).__name__}: {e}`",
+            ephemeral=True,
+        )
+        return
+
+    await ctx.followup.send(
+        "successfully reset all cooldowns.",
+        ephemeral=True,
+    )
 
 
 bot.add_application_command(dev)

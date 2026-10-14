@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from pathlib import Path
 from typing import Literal
 from functools import wraps
@@ -134,3 +135,39 @@ def set_cooldown(user_id: int, action_id: str):
         INSERT OR REPLACE INTO cooldowns (user_id, action_id, last_used)
         VALUES (?, ?, unixepoch())
     """, (user_id, action_id))
+
+@can_commit
+def get_cooldown(user_id: int, action_id: str):
+    """Gets a cooldown for an user"""
+    add_user(user_id)
+
+    cursor = _conn.execute("""
+        SELECT last_used FROM cooldowns WHERE user_id = ? AND action_id = ?
+    """, (user_id, action_id))
+    result = cursor.fetchone()
+
+    if result:
+        return result[0]
+    else:
+        return 0
+
+@can_commit
+def is_on_cooldown(user_id: int, action_id: str, cooldown: int):
+    """Return whether an action is on cooldown and how much time remains.
+
+    Returns a tuple of (is_on_cooldown, remaining_seconds). If the action has
+    never been used before, it is treated as not on cooldown and the full cooldown
+    duration is returned as remaining time.
+    """
+    # get_cooldown() returns 0 when the row does not exist yet.
+    # Treat that as "not on cooldown" instead of a huge elapsed time.
+    last_used = get_cooldown(user_id, action_id)
+
+    if last_used == 0:
+        return False, cooldown
+
+    elapsed = time.time() - last_used
+    remaining = max(0, cooldown - elapsed)
+
+    # The action is still cooling down while remaining > 0.
+    return remaining > 0, remaining
