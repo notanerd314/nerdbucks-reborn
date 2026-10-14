@@ -375,5 +375,7 @@ class Beg(discord.Cog):
             ephemeral=False,
         )
 
+        db.set_cooldown(ctx.author.id, "beg")
+
 def setup(bot):
     bot.add_cog(Beg(bot))
