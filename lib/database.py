@@ -127,6 +127,36 @@ def change_amount(user_id: int, amount: int, balance_type: BalanceType):
     """, (amount, user_id,))
 
 @can_commit
+def transfer_amount(
+    user_id: int,
+    amount: int,
+    source: BalanceType,
+    destination: BalanceType,
+    fee: int = 0,
+):
+    """Move money between balances in one conditional update and commit."""
+    if not is_valid_balance_type(source) or not is_valid_balance_type(destination):
+        raise ValueError("Invalid BalanceType")
+    if source == destination:
+        raise ValueError("Source and destination must be different")
+    if amount <= 0 or fee < 0 or fee > amount:
+        raise ValueError("Invalid transfer amount or fee")
+
+    _conn.execute("""
+        INSERT OR IGNORE INTO users (user_id)
+        VALUES (?)
+    """, (user_id,))
+
+    cursor = _conn.execute(f"""
+        UPDATE users
+        SET {source} = {source} - ?,
+            {destination} = {destination} + ?
+        WHERE user_id = ? AND {source} >= ?
+    """, (amount, amount - fee, user_id, amount))
+
+    return cursor.rowcount > 0
+
+@can_commit
 def set_cooldown(user_id: int, action_id: str):
     """Sets the cooldown for an user"""
     add_user(user_id)
