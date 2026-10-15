@@ -6,6 +6,7 @@ import json
 import traceback
 
 from lib import database as db
+from lib.emojis import NERDBUCKS
 from lib import util
 from groq import AsyncGroq
 
@@ -26,10 +27,10 @@ BEG_PERSONALITIES: dict = {
         "prompt": (
             "You're a tough but fair judge in a goofy economy game. "
             "You're hard to impress, but you still want the player to "
-            "have fun. Give $15–75 for an ordinary attempt and up to "
-            "$150 for a genuinely clever or hilarious one. Even a "
+            f"have fun. Give 15–75 {NERDBUCKS} for an ordinary attempt and up to "
+            f"150 {NERDBUCKS} for a genuinely clever or hilarious one. Even a "
             "mediocre plea deserves a small consolation payout. "
-            "Give $0 only for completely empty, nonsensical, or "
+            f"Give 0 {NERDBUCKS} only for completely empty, nonsensical, or "
             "obviously effortless submissions."
         ),
         "description": "A tough judge who's still willing to pay.",
@@ -38,10 +39,10 @@ BEG_PERSONALITIES: dict = {
     "normal": {
         "prompt": (
             "You're an average person playing a silly begging minigame. "
-            "Give $30–100 for ordinary pleas, $100–200 for funny or "
+            f"Give 30–100 {NERDBUCKS} for ordinary pleas, 100–200 {NERDBUCKS} for funny or "
             "creative ones, and occasionally more for an exceptional "
             "attempt. Most genuine attempts should earn money. "
-            "Reserve $0 for submissions with practically no effort."
+            f"Reserve 0 {NERDBUCKS} for submissions with practically no effort."
         ),
         "description": "An ordinary person with money to spare.",
         "image_url": "https://placehold.co/256x256?text=Normal",
@@ -49,11 +50,11 @@ BEG_PERSONALITIES: dict = {
     "old": {
         "prompt": (
             "You're an old-fashioned person who appreciates manners, "
-            "storytelling, and a bit of charm. Give $40–125 for a "
-            "reasonable attempt and up to $225 for a memorable one. "
+            f"storytelling, and a bit of charm. Give 40–125 {NERDBUCKS} for a "
+            f"reasonable attempt and up to 225 {NERDBUCKS} for a memorable one. "
             "Reward polite, heartfelt, ridiculous, or funny pleas. "
             "Don't demand a realistic sob story; this is a game. "
-            "Only give $0 for nearly blank or completely effortless pleas."
+            f"Only give 0 {NERDBUCKS} for nearly blank or completely effortless pleas."
         ),
         "description": "An old-fashioned person with a soft spot for manners.",
         "image_url": "https://placehold.co/256x256?text=Old",
@@ -62,9 +63,9 @@ BEG_PERSONALITIES: dict = {
         "prompt": (
             "You're irritated that someone is begging you, but you're "
             "playing a goofy economy game and can be bribed by humor. "
-            "Give $5–35 for ordinary pleas and up to $100 for something "
+            f"Give 5–35 {NERDBUCKS} for ordinary pleas and up to 100 {NERDBUCKS} for something "
             "that makes you laugh. A terrible joke can still earn a "
-            "few pity dollars. Give $0 only if the player barely tries."
+            f"few pity dollars. Give 0 {NERDBUCKS} only if the player barely tries."
         ),
         "description": "An irritated person who might pay you to leave.",
         "image_url": "https://placehold.co/256x256?text=Annoyed",
@@ -72,10 +73,10 @@ BEG_PERSONALITIES: dict = {
     "gullible": {
         "prompt": (
             "You're hilariously gullible and believe almost any excuse. "
-            "Give $75–175 for ordinary attempts, $175–350 for convincing "
+            f"Give 75–175 {NERDBUCKS} for ordinary attempts, 175–350 {NERDBUCKS} for convincing "
             "or funny ones, and occasionally more for absurdly creative "
             "stories. Even a flimsy excuse can work on you. "
-            "Give $0 only for an empty or completely effortless plea."
+            f"Give 0 {NERDBUCKS} only for an empty or completely effortless plea."
         ),
         "description": "An easy target for a convincing sob story.",
         "image_url": "https://placehold.co/256x256?text=Gullible",
@@ -84,9 +85,9 @@ BEG_PERSONALITIES: dict = {
         "prompt": (
             "You're absurdly rich, dramatic, and ridiculously demanding. "
             "You have plenty of money, but expect entertainment. Give "
-            "$100–450 for ordinary attempts and $450–1,000 or more for "
+            f"100–450 {NERDBUCKS} for ordinary attempts and 450–1,000 {NERDBUCKS} or more for "
             "clever, hilarious, or spectacularly ridiculous pleas. "
-            "Even mediocre entertainment gets paid. Give $0 only when "
+            f"Even mediocre entertainment gets paid. Give 0 {NERDBUCKS} only when "
             "the player makes practically no effort."
         ),
         "description": "A billionaire who expects premium entertainment.",
@@ -95,10 +96,10 @@ BEG_PERSONALITIES: dict = {
     "rich_generous": {
         "prompt": (
             "You're a ridiculously wealthy philanthropist in a silly "
-            "game. You love throwing money at people. Give $100–400 "
-            "for ordinary pleas, $400–1,000 for funny or creative ones, "
+            f"game. You love throwing money at people. Give 100–400 {NERDBUCKS} "
+            f"for ordinary pleas, 400–1,000 {NERDBUCKS} for funny or creative ones, "
             "and occasionally several thousand for an exceptional plea. "
-            "You're generous by default. Give $0 only for empty or "
+            f"You're generous by default. Give 0 {NERDBUCKS} only for empty or "
             "completely effortless submissions."
         ),
         "description": "A billionaire who throws money at basically anything.",
@@ -107,10 +108,10 @@ BEG_PERSONALITIES: dict = {
     "old_dude": {
         "prompt": (
             "You're a chill old dude who enjoys jokes, weird stories, "
-            "and entertaining nonsense. Give $50–200 for ordinary "
-            "attempts and $200–500 for particularly funny or heartfelt "
+            f"and entertaining nonsense. Give 50–200 {NERDBUCKS} for ordinary "
+            f"attempts and 200–500 {NERDBUCKS} for particularly funny or heartfelt "
             "ones. You don't need a convincing real-life excuse; "
-            "being entertaining is enough. Give $0 only for a blank "
+            f"being entertaining is enough. Give 0 {NERDBUCKS} only for a blank "
             "or completely effortless plea."
         ),
         "description": "A chill old dude who enjoys a good laugh.",
@@ -287,7 +288,7 @@ class BegView(DesignerView):
                 f"> *{self.plea}*\n"
                 "Their response:\n"
                 f"> *{self.response}*"
-                f"\n\nYou recieved **${self.payout:,}**."
+                f"\n\nYou recieved **{self.payout:,} {NERDBUCKS}**."
             )
         else:
             text = (
@@ -301,7 +302,6 @@ class BegView(DesignerView):
                 TextDisplay(text),
                 accessory=Thumbnail(personality["image_url"]),
             ),
-            colour=discord.Colour.yellow(),
         )
     
     def rebuild_items(self):
@@ -319,7 +319,7 @@ class BegView(DesignerView):
         def __init__(self, parent: "BegView"):
             super().__init__(
                 label="Make your plea",
-                style=discord.ButtonStyle.primary,
+                style=discord.ButtonStyle.secondary,
                 emoji="🙏",
             )
 

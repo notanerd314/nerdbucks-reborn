@@ -7,8 +7,7 @@ class Events(discord.Cog):
 
     @discord.Cog.listener()
     async def on_ready(self):
-        print("NerdBucks is ready!")
-        print("R to reload extensions, M to migrate database")
+        print("[NerdBucks is ready!]")
 
 def setup(bot: discord.Bot):
     bot.add_cog(Events(bot))

@@ -3,6 +3,7 @@ import math
 import random
 
 import discord
+from lib.emojis import NERDBUCKS
 from discord.ui import (
     ActionRow,
     Button,
@@ -48,17 +49,16 @@ class GuessNumberView(DesignerView):
                 "# Guess the Number\n"
                 f"Phonk Industries is cracking a code, they only know the range is **0 to {RANGE}**. Can you help?\n"
                 f"**Guesses:** {self.guesses}          "
-                f"💵 **Pay:** ${calculate_pay(max(1, self.guesses))}"
+                f"💵 **Pay:** {calculate_pay(max(1, self.guesses))} {NERDBUCKS}"
             ),
             Separator(),
             TextDisplay(self.status),
-            colour=discord.Colour.green(),
         )
 
         if not self.finished:
             guess_button = Button(
                 label="Guess",
-                style=discord.ButtonStyle.green,
+                style=discord.ButtonStyle.secondary,
             )
             guess_button.callback = self.open_guess_modal
             container.add_item(ActionRow(guess_button))
@@ -128,7 +128,7 @@ class GuessNumberView(DesignerView):
             self.pay = calculate_pay(self.guesses)
             self.status = (
                 f"Correct! The number was **{self.target}**. "
-                f"You guessed it in **{self.guesses}** attempts and earned **${self.pay}**."
+                f"You guessed it in **{self.guesses}** attempts and earned **{self.pay} {NERDBUCKS}**."
             )
 
         await interaction.response.defer()

@@ -1,13 +1,18 @@
+
 import discord
 from discord.ext import commands
 from lib import database as db
+from lib.emojis import NERDBUCKS
 
 
 class Withdraw(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @discord.slash_command(name="withdraw", description="Withdraw money from your bank.")
+    @discord.slash_command(
+        name="withdraw",
+        description="Withdraw money from your bank.",
+    )
     @discord.option(
         "amount",
         int,
@@ -16,7 +21,10 @@ class Withdraw(commands.Cog):
     )
     async def withdraw(self, ctx: discord.ApplicationContext, amount: int):
         if amount <= 0:
-            await ctx.respond("Enter an amount greater than zero.", ephemeral=True)
+            await ctx.respond(
+                "Enter an amount greater than zero.",
+                ephemeral=True,
+            )
             return
 
         transferred = db.transfer_amount(
@@ -25,11 +33,23 @@ class Withdraw(commands.Cog):
             "bank",
             "wallet",
         )
+
         if not transferred:
-            await ctx.respond("You don't have enough money in your bank.", ephemeral=True)
+            await ctx.respond(
+                "You don't have enough money in your bank.",
+                ephemeral=True,
+            )
             return
 
-        await ctx.respond(f"Withdrew **${amount:,}** from your bank.")
+        embed = discord.Embed(
+            title="Withdrawal Successful",
+            description=(
+                f"Successfully withdrew **{amount:,} {NERDBUCKS}** from your bank "
+                f"and transferred it to your wallet."
+            ),
+        )
+
+        await ctx.respond(embed=embed)
 
 
 def setup(bot: commands.Bot):

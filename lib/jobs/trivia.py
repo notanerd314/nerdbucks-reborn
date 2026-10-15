@@ -3,6 +3,7 @@ import html
 import random
 import requests
 import discord
+from lib.emojis import NERDBUCKS
 from discord.ui import (
     DesignerView,
     Container,
@@ -121,9 +122,8 @@ class TriviaView(DesignerView):
                     f"You answered all **{total_questions}** questions.\n"
                     f"✅ **Correct:** {self.correct}       "
                     f"❌ **Incorrect:** {self.incorrect}        "
-                    f"💵 **Pay:** ${self.pay}"
+                    f"💵 **Pay:** {self.pay} {NERDBUCKS}"
                 ),
-                colour=discord.Colour.red(),
             )
 
         question = self.questions[self.question_index]
@@ -136,21 +136,20 @@ class TriviaView(DesignerView):
                 f"Answer these **{total_questions}** questions below.\n"
                 f"✅ **Correct:** {self.correct}    "
                 f"❌ **Incorrect:** {self.incorrect}    "
-                f"💵 **Pay:** ${self.pay}"
+                f"💵 **Pay:** {self.pay} {NERDBUCKS}"
             ),
             Separator(),
             TextDisplay(
                 f"-# Question **{question_number}** of {total_questions}\n"
                 f"## {question['question']}"
             ),
-            colour=discord.Colour.green(),
         )
 
         answer_buttons = []
         for option in question["options"]:
             button = Button(
                 label=option,
-                style=discord.ButtonStyle.primary,
+                style=discord.ButtonStyle.secondary,
             )
             button.callback = (
                 lambda interaction, answer=option, index=self.question_index:

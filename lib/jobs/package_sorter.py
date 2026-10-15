@@ -1,5 +1,6 @@
 import asyncio
 import discord
+from lib.emojis import NERDBUCKS
 import random
 from discord.ui import (
     DesignerView,
@@ -106,10 +107,9 @@ class PackageSorterView(DesignerView):
             TextDisplay(
                 f"✅ **Correct:** {self.correct}    "
                 f"❌ **Incorrect:** {self.incorrect}    "
-                f"💵 **Pay:** ${self.pay}"
+                f"💵 **Pay:** {self.pay} {NERDBUCKS}"
             ),
             Separator(),
-            colour=discord.Colour.nitro_pink(),
         )
 
         buttons = []
@@ -117,7 +117,7 @@ class PackageSorterView(DesignerView):
         for option in self.options:
             button = Button(
                 label=option,
-                style=discord.ButtonStyle.primary,
+                style=discord.ButtonStyle.secondary,
             )
 
             button.callback = (

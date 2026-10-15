@@ -11,6 +11,7 @@ from discord.ui import (
     button,
 )
 from lib import database as db
+from lib.emojis import NERDBUCKS
 
 
 class BalanceViewActions(ActionRow):
@@ -71,11 +72,10 @@ class BalanceView(DesignerView):
             ),
             Separator(),
             TextDisplay(
-                f"**Total Net Worth:** {net_worth:,} 🪙\n"
-                f"**Wallet:** {wallet:,} 🪙\n"
-                f"**Bank:** {bank:,} 🪙"
+                f"**Total Net Worth:** {net_worth:,} {NERDBUCKS}\n"
+                f"**Wallet:** {wallet:,} {NERDBUCKS}\n"
+                f"**Bank:** {bank:,} {NERDBUCKS}"
             ),
-            colour=discord.Colour(5793266),
         )
 
     async def refresh(self, interaction: discord.Interaction):

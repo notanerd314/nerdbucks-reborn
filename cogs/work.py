@@ -4,6 +4,7 @@ import random
 import discord
 from discord.ext import commands
 from lib import database as db
+from lib.emojis import NERDBUCKS
 from lib import util
 
 import lib.jobs.guess_number as guess_number
@@ -48,7 +49,7 @@ class Work(commands.Cog):
         db.change_amount(ctx.author.id, pay, "wallet")
         db.set_cooldown(ctx.author.id, "work")
 
-        await ctx.followup.send(f"You earned **${pay}**!")
+        await ctx.followup.send(f"You earned **{pay} {NERDBUCKS}**!")
 
 
 def setup(bot: commands.Bot):

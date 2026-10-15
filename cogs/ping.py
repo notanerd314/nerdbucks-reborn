@@ -14,7 +14,6 @@ class Ping(discord.Cog):
         embed = discord.Embed(
             title="Pong!",
             description=f"**Latency:** `{latency}ms`",
-            color=15548997
         )
 
         embed.set_thumbnail(
