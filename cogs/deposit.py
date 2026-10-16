@@ -4,6 +4,7 @@ from discord.ext import commands
 from lib import database as db
 from lib.emojis import NERDBUCKS
 
+DEPOSIT_FEE = 8
 
 class Deposit(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -27,7 +28,7 @@ class Deposit(commands.Cog):
             )
             return
 
-        fee = amount * 5 // 100
+        fee = amount * DEPOSIT_FEE // 100
         deposited = amount - fee
 
         transferred = db.transfer_amount(
@@ -58,7 +59,7 @@ class Deposit(commands.Cog):
             inline=True,
         )
         embed.add_field(
-            name="📉 Transaction Fee (5%)",
+            name="📉 Transaction Fee (8%)",
             value=f"-{fee:,} {NERDBUCKS}",
             inline=True,
         )
