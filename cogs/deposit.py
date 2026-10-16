@@ -1,6 +1,7 @@
 
 import discord
 from discord.ext import commands
+from discord.ui import Container, DesignerView, Separator, TextDisplay
 from lib import database as db
 from lib.emojis import NERDBUCKS
 
@@ -46,30 +47,23 @@ class Deposit(commands.Cog):
             )
             return
 
-        embed = discord.Embed(
-            title="Deposit Successful",
-            description=(
-                f"Successfully deposited **{deposited:,} {NERDBUCKS}** into your bank."
-            ),
+        view = DesignerView()
+        view.add_item(
+            Container(
+                TextDisplay(
+                    "# Deposit Successful\n"
+                    f"Successfully deposited **{deposited:,} {NERDBUCKS}** into your bank."
+                ),
+                Separator(),
+                TextDisplay(
+                    f"💵 **Amount:** {amount:,} {NERDBUCKS}\n"
+                    f"📉 **Transaction Fee (8%):** -{fee:,} {NERDBUCKS}\n"
+                    f"🏦 **Deposited:** **{deposited:,} {NERDBUCKS}**"
+                ),
+            )
         )
 
-        embed.add_field(
-            name="💵 Amount",
-            value=f"{amount:,} {NERDBUCKS}",
-            inline=True,
-        )
-        embed.add_field(
-            name="📉 Transaction Fee (8%)",
-            value=f"-{fee:,} {NERDBUCKS}",
-            inline=True,
-        )
-        embed.add_field(
-            name="🏦 Deposited",
-            value=f"**{deposited:,} {NERDBUCKS}**",
-            inline=True,
-        )
-
-        await ctx.respond(embed=embed)
+        await ctx.respond(view=view)
 
 
 def setup(bot: commands.Bot):

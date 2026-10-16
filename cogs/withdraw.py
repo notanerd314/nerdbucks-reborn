@@ -1,6 +1,7 @@
 
 import discord
 from discord.ext import commands
+from discord.ui import Container, DesignerView, TextDisplay
 from lib import database as db
 from lib.emojis import NERDBUCKS
 
@@ -41,15 +42,18 @@ class Withdraw(commands.Cog):
             )
             return
 
-        embed = discord.Embed(
-            title="Withdrawal Successful",
-            description=(
-                f"Successfully withdrew **{amount:,} {NERDBUCKS}** from your bank "
-                f"and transferred it to your wallet."
-            ),
+        view = DesignerView()
+        view.add_item(
+            Container(
+                TextDisplay(
+                    "# Withdrawal Successful\n"
+                    f"Successfully withdrew **{amount:,} {NERDBUCKS}** from your bank "
+                    "and transferred it to your wallet."
+                )
+            )
         )
 
-        await ctx.respond(embed=embed)
+        await ctx.respond(view=view)
 
 
 def setup(bot: commands.Bot):
