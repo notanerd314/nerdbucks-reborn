@@ -20,6 +20,7 @@ from discord.ui import (
 )
 
 client = AsyncGroq(api_key=os.getenv("GROQ", "0"))
+COOLDOWN = 10 * 60
 
 MAX_PLEA_LENGTH = 200
 BEG_PERSONALITIES: dict = {
@@ -363,7 +364,7 @@ class Beg(discord.Cog):
         description="Convince an AI to give you free money.",
     )
     async def beg(self, ctx: discord.ApplicationContext):
-        on_cooldown, remaining = db.is_on_cooldown(ctx.author.id, "beg", 20)
+        on_cooldown, remaining = db.is_on_cooldown(ctx.author.id, "beg", COOLDOWN)
         if on_cooldown:
             await ctx.followup.send(f"how about you get off your ass and actually work? wait `{util.pretty_time(remaining)}`")
             return
