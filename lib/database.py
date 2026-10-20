@@ -1,7 +1,8 @@
 import sqlite3
 import time
+import random
 from pathlib import Path
-from typing import Literal
+from typing import Literal, TypedDict
 from functools import wraps
 
 Path("db").mkdir(exist_ok=True)
@@ -14,6 +15,12 @@ migrations = Path("db/migrations")
 migrations.mkdir(parents=True, exist_ok=True)
 
 BalanceType = Literal["wallet", "bank"]
+
+class UserRecord(TypedDict):
+    user_id: str
+    wallet: int
+    bank: int
+    joined_at: str | None
 
 # migration
 def sql_quote(value: str) -> str:
@@ -80,7 +87,7 @@ def is_valid_balance_type(value: str):
     """Checks if the balance type is valid"""
     return value in ["wallet", "bank"]
 
-def format_users(raw_data: tuple):
+def format_users(raw_data: sqlite3.Row) -> UserRecord:
     return {
         "user_id": raw_data[0],
         "wallet": raw_data[1],
@@ -102,7 +109,7 @@ def add_user(user_id: int):
     """, (user_id,))
 
 @can_commit
-def get_user(user_id: int):
+def get_user(user_id: int) -> UserRecord:
     """Fetches an user"""
     add_user(user_id)
 
@@ -110,7 +117,11 @@ def get_user(user_id: int):
         SELECT * FROM users WHERE user_id = ?
     """, (user_id,))
 
-    return format_users(cursor.fetchone())
+    raw_data = cursor.fetchone()
+    if raw_data is None:
+        raise LookupError(f"User {user_id} was not found after insertion")
+
+    return format_users(raw_data)
 
 @can_commit
 def change_amount(user_id: int, amount: int, balance_type: BalanceType):
@@ -201,3 +212,17 @@ def is_on_cooldown(user_id: int, action_id: str, cooldown: int):
 
     # The action is still cooling down while remaining > 0.
     return remaining > 0, remaining
+
+def choose_random_user(target: BalanceType, minimum_amount: int = 100) -> int | None:
+    cursor = _conn.execute(f"""
+        SELECT user_id
+        FROM users
+        WHERE {target} > ?;
+    """, (minimum_amount,))
+
+    roster = cursor.fetchall()
+
+    if not roster:
+        return None
+
+    return random.choice(roster)[0]
