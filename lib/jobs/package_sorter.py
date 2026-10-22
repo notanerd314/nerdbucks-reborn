@@ -67,10 +67,10 @@ class PackageSorterView(DesignerView):
 
         if chosen == self.correct_category:
             self.correct += 1
-            self.pay += random.randint(20, 45)
+            self.pay += random.randint(50, 85)
         else:
             self.incorrect += 1
-            self.pay = max(0, self.pay - random.randint(10, 25))
+            self.pay = max(0, self.pay - random.randint(25, 40))
 
         self.clear_items()
         self.add_item(self.build())

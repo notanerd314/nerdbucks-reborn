@@ -18,7 +18,7 @@ def fetch_questions(amount: int = 5) -> list[dict[str, str | list[str]]]:
     """Fetch and normalize mixed multiple-choice and true/false questions."""
     response = requests.get(
         "https://opentdb.com/api.php",
-        params={"amount": amount},
+        params={"amount": amount, "difficulty": random.choice(["easy", "medium"])},
         timeout=10,
     )
     response.raise_for_status()
@@ -98,7 +98,7 @@ class TriviaView(DesignerView):
         question = self.questions[question_index]
         if selected_answer == question["answer"]:
             self.correct += 1
-            self.pay += random.randint(60, 75)
+            self.pay += random.randint(90, 125)
         else:
             self.incorrect += 1
 

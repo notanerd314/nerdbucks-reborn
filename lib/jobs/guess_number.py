@@ -16,8 +16,8 @@ from discord.ui import (
 )
 
 
-MAX_PAY = 400
-MAX_GUESSES_FOR_PAYOUT = 20
+MAX_PAY = 450
+MAX_GUESSES_FOR_PAYOUT = 15
 RANGE = 200
 
 def calculate_pay(guess_count: int) -> int:
