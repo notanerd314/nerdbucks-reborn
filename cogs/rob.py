@@ -61,7 +61,7 @@ class RobView(DesignerView):
                         "# Rob Successful"
                     ),
                     TextDisplay(
-                        f"{random.choice(MESSAGES["success"]).format(a=self.ctx.author.display_name, b=self.target.display_name)} \n"
+                        f"{random.choice(MESSAGES['success']).format(a=self.ctx.author.display_name, b=self.target.display_name)} \n"
                     ),
                     Separator(),
                     TextDisplay(
@@ -78,7 +78,7 @@ class RobView(DesignerView):
                         "# Rob Failed"
                     ),
                     TextDisplay(
-                        f"{random.choice(MESSAGES["failed"]).format(a=self.ctx.author.display_name, b=self.target.display_name)} \n"
+                        f"{random.choice(MESSAGES['failed']).format(a=self.ctx.author.display_name, b=self.target.display_name)} \n"
                     ),
                     Separator(),
                     TextDisplay(
