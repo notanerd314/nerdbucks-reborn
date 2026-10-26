@@ -366,7 +366,7 @@ class Beg(discord.Cog):
     async def beg(self, ctx: discord.ApplicationContext):
         on_cooldown, remaining = db.is_on_cooldown(ctx.author.id, "beg", COOLDOWN)
         if on_cooldown:
-            await ctx.followup.send(f"how about you get off your ass and actually work? wait `{util.pretty_time(remaining)}`")
+            await ctx.respond(f"how about you get off your ass and actually work? wait `{util.pretty_time(remaining)}`")
             return
 
         view = BegView(ctx)

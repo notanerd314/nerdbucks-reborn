@@ -213,12 +213,12 @@ def is_on_cooldown(user_id: int, action_id: str, cooldown: int):
     # The action is still cooling down while remaining > 0.
     return remaining > 0, remaining
 
-def choose_random_user(target: BalanceType, minimum_amount: int = 100) -> int | None:
+def choose_random_user(target: BalanceType, minimum_amount: int = 100, filter: list[int] = []) -> int | None:
     cursor = _conn.execute(f"""
         SELECT user_id
         FROM users
-        WHERE {target} > ?;
-    """, (minimum_amount,))
+        WHERE {target} > ? {f'AND user_id NOT IN ({", ".join(["?"] * len(filter))})' if filter else ""};
+    """, (minimum_amount, *filter,))
 
     roster = cursor.fetchall()
 
@@ -226,3 +226,40 @@ def choose_random_user(target: BalanceType, minimum_amount: int = 100) -> int | 
         return None
 
     return random.choice(roster)[0]
+
+@can_commit
+def transfer_user(
+    source: int,
+    target: int,
+    balance_type: BalanceType,
+    amount: int,
+) -> bool:
+    """Transfer money between users. Returns whether the transfer succeeded."""
+    if not is_valid_balance_type(balance_type):
+        raise ValueError("Invalid BalanceType")
+    if source == target:
+        raise ValueError("Source and target must be different")
+    if amount <= 0:
+        raise ValueError("Transfer amount must be positive")
+
+    cursor = _conn.execute(f"""
+        UPDATE users
+        SET {balance_type} = {balance_type} - ?
+        WHERE user_id = ? AND {balance_type} >= ?
+    """, (amount, source, amount))
+
+    if cursor.rowcount == 0:
+        return False
+
+    _conn.execute("""
+        INSERT OR IGNORE INTO users (user_id)
+        VALUES (?)
+    """, (target,))
+
+    _conn.execute(f"""
+        UPDATE users
+        SET {balance_type} = {balance_type} + ?
+        WHERE user_id = ?
+    """, (amount, target))
+
+    return True

@@ -1,8 +1,8 @@
-import discord
 from lib import database as db
 
 import random
 import discord
+import asyncio
 from discord.ui import (
     DesignerView,
     Container,
@@ -11,6 +11,7 @@ from discord.ui import (
     Separator
 )
 from lib import emojis
+from lib import util
 
 MESSAGES = {
     "success": [
@@ -33,7 +34,7 @@ MESSAGES = {
 
 class RobView(DesignerView):
     def __init__(self, ctx: discord.ApplicationContext, target: discord.User):
-        super().__init__(timeout=40.0)
+        super().__init__()
 
         self.ctx = ctx
         self.target = target
@@ -42,6 +43,18 @@ class RobView(DesignerView):
         self.dice = None
         self.success = None
         self.amount = None
+
+        self.add_item(self.build())
+
+    async def start(self):
+        await asyncio.sleep(5)
+
+        self.roll()
+        self.finished = True
+        self.clear_items()
+        self.add_item(self.build())
+
+        await self.ctx.edit(view=self)
 
     def build(self):
         if not self.finished:
@@ -102,23 +115,31 @@ class RobView(DesignerView):
         if self.dice > threshold:
             self.success = True
             self.amount = max(100, min(5000, int(target["wallet"] * 0.1)))
+
+            db.transfer_user(self.target.id, self.ctx.author.id, "wallet", self.amount)
         else:
             self.success = False
             self.amount = max(100, min(4500, int(robber["wallet"] * 0.12)))
+            db.transfer_user(self.ctx.author.id, self.target.id, "wallet", self.amount)
 
 
 class Rob(discord.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    # @discord.slash_command(name="rob", description="Rob someone, isn't that self explanatory?")
+    @discord.slash_command(name="rob", description="Rob someone, isn't that self explanatory?")
     async def rob(self, ctx: discord.ApplicationContext):
+        on_cooldown, remaining = db.is_on_cooldown(ctx.author.id, "beg", 30 * 60)
+        if on_cooldown:
+            await ctx.respond(f"there are other ways. wait `{util.pretty_time(remaining)}`")
+            return
+        
         user: discord.User | None = None
 
         # choose a random mf
-        user_id = db.choose_random_user("wallet", 100)
+        user_id = db.choose_random_user("wallet", 100, [ctx.author.id])
         if user_id is None:
-            await ctx.respond("this server full of brokies, cant choose a random dude")
+            await ctx.respond("this server full of brokies, cant choose a dude")
             return
         
         try:
@@ -126,6 +147,13 @@ class Rob(discord.Cog):
         except discord.NotFound:
             await ctx.respond("the dude our algorithm picked doesnt exist, tough luck")
             return
+
+        db.set_cooldown(ctx.author.id, "rob")
+
+        view = RobView(ctx, user)
+
+        await ctx.respond(view=view)
+        await view.start()
 
 def setup(bot: discord.Bot):
     bot.add_cog(Rob(bot))
