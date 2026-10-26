@@ -129,7 +129,7 @@ class Rob(discord.Cog):
 
     @discord.slash_command(name="rob", description="Rob someone, isn't that self explanatory?")
     async def rob(self, ctx: discord.ApplicationContext):
-        on_cooldown, remaining = db.is_on_cooldown(ctx.author.id, "beg", 30 * 60)
+        on_cooldown, remaining = db.is_on_cooldown(ctx.author.id, "rob", 30 * 60)
         if on_cooldown:
             await ctx.respond(f"there are other ways. wait `{util.pretty_time(remaining)}`")
             return
