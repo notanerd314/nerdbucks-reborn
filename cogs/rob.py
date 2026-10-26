@@ -64,7 +64,7 @@ class RobView(DesignerView):
                 ),
                 TextDisplay(f"**{self.ctx.author.display_name}** is robbing **{self.target.display_name}**!"),
                 MediaGallery(
-                    discord.MediaGalleryItem("https://tenor.com/view/angry-birds-gif-12007401521632546156")
+                    discord.MediaGalleryItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIPAvOn1Xo2Q7KKfQZsH6CBJvd2jFfcYNvNunej1OoRA&s=10")
                 )
             )
         else:
