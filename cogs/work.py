@@ -19,7 +19,7 @@ class Work(commands.Cog):
     @discord.slash_command(name="work", description="Work to earn money.")
     async def work(self, ctx: discord.ApplicationContext):
         on_cooldown, remaining = db.is_on_cooldown(
-            ctx.author.id, "work", 15 * 60
+            ctx.author.id, "work", 4 * 60
         )
 
         if on_cooldown:

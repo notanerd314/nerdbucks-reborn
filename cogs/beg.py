@@ -20,7 +20,7 @@ from discord.ui import (
 )
 
 client = AsyncGroq(api_key=os.getenv("GROQ", "0"))
-COOLDOWN = 5 * 60
+COOLDOWN = 1 * 60
 
 MAX_PLEA_LENGTH = 200
 BEG_PERSONALITIES: dict = {
