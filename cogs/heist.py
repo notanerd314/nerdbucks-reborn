@@ -148,6 +148,8 @@ class HeistView(DesignerView):
         self.timed_out = False
         self.status = "Proceeding with the heist..."
 
+        print("WORDLE ANSWER", self.answer)
+
         self.refresh()
 
     @property
