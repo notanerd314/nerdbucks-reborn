@@ -25,7 +25,7 @@ class Transfer(commands.Cog):
         required=True,
         description="The amount to transfer",
     )
-    async def withdraw(self, ctx: discord.ApplicationContext, user: discord.User, amount: int):
+    async def transfer(self, ctx: discord.ApplicationContext, user: discord.User, amount: int):
         if amount <= 0:
             await ctx.respond(
                 "Enter an amount greater than zero.",
