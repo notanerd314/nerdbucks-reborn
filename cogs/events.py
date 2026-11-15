@@ -1,5 +1,4 @@
 import discord
-from lib import database as db
 
 class Events(discord.Cog):
     def __init__(self, bot):

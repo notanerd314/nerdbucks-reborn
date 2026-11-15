@@ -20,7 +20,6 @@ def get_extensions():
         if file.endswith(".py") and not file.startswith("_")
     ]
 
-
 def reload_lib():
     modules = sorted(
         [
@@ -34,7 +33,6 @@ def reload_lib():
     for name in modules:
         importlib.reload(sys.modules[name])
         print(f"↻ Reloaded {name}")
-
 
 def reload_cogs():
     for extension in get_extensions():
