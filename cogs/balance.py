@@ -20,7 +20,8 @@ class BalanceViewActions(ActionRow):
         self.balance_view = view
 
     @button(label="Refresh", style=discord.ButtonStyle.secondary)
-    async def refresh(self, button, interaction: discord.Interaction):
+    async def refresh(self, _button, interaction: discord.Interaction):
+        del _button
         view = self.balance_view
 
         if (
