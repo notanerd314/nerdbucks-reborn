@@ -187,7 +187,11 @@ class HeistView(DesignerView):
 
         container = Container(TextDisplay(
             "# Wordle\n"
-            "Guess the five-letter password.\n\n"
+            "Crack the vault password! Take turns guessing a five-letter word. "
+            "The fewer guesses it takes, the better your odds of pulling off the heist.\n\n"
+            "🟩 right letter, right spot\n"
+            "🟨 right letter, wrong spot\n"
+            "⬛ letter not in the word\n\n"
             f"**Current player:** {self.player.mention}\n"
             f"**Total guesses:** {len(self.history)}\n\n"
             f"{history}"
@@ -402,7 +406,13 @@ class HeistLobby(DesignerView):
 
         container = Container(TextDisplay(
             "# Bank Heist\n"
-            f"**Target:** {self.target.display_name}\n"
+            f"**Target:** {self.target.display_name}\n\n"
+            "**How it works**\n"
+            f"1. Click **Join Heist** until the crew is full ({CREW_SIZE} players).\n"
+            "2. Solve a Wordle together, taking turns guessing.\n"
+            "3. Fewer guesses means a higher chance of success.\n"
+            "4. Win and the crew splits money stolen from the target's bank. "
+            "Lose and the crew pays the target instead.\n\n"
             f"**Crew ({len(self.players)}/{CREW_SIZE})**\n"
             f"{roster}\n\n"
             f"{self.status}"
