@@ -28,7 +28,6 @@ MESSAGES = {
         "{b} turned on the lights and kicked {a}'s ass!",
         "{a} unsuccessfully robbed {b}.",
         "{a} got caught lacking by {b}.",
-        "{a} committed a sin and didn't repent."
     ]
 }
 
