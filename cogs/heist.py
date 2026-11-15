@@ -221,6 +221,14 @@ class HeistView(DesignerView):
         await interaction.response.send_message(message, ephemeral=True)
         return False
 
+    async def ping_current_player(self, interaction: discord.Interaction):
+        """Mentions inside edited messages don't notify, so send a short-lived new message."""
+        await interaction.followup.send(
+            f"{self.player.mention} it's your turn to guess!",
+            allowed_mentions=discord.AllowedMentions(users=[self.player]),
+            delete_after=60,
+        )
+
     async def on_submit_click(self, interaction: discord.Interaction):
         if await self.check_turn(interaction):
             await interaction.response.send_modal(GuessModal(self))
@@ -247,6 +255,7 @@ class HeistView(DesignerView):
             self.turn = (self.turn + 1) % len(self.crew)
             self.refresh()
             await interaction.response.edit_message(view=self)
+            await self.ping_current_player(interaction)
             return
 
         self.finished = True
@@ -464,9 +473,9 @@ class HeistLobby(DesignerView):
                 self.finished = True
                 self.stop()
 
-                await interaction.response.edit_message(
-                    view=HeistView(self.ctx, self.players, self.target)
-                )
+                heist = HeistView(self.ctx, self.players, self.target)
+                await interaction.response.edit_message(view=heist)
+                await heist.ping_current_player(interaction)
                 return
 
             self.refresh()
