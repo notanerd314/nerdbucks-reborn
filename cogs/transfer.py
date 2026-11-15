@@ -5,7 +5,7 @@ from lib import database as db
 from lib.emojis import NERDBUCKS
 
 
-class Withdraw(commands.Cog):
+class Transfer(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -62,4 +62,4 @@ class Withdraw(commands.Cog):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(Withdraw(bot))
+    bot.add_cog(Transfer(bot))
