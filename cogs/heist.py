@@ -20,7 +20,7 @@ import lib.util as util
 
 CrewMember = discord.Member | discord.User
 
-CREW_SIZE = 3
+CREW_SIZE = 2
 COOLDOWN = 60 * 60
 
 WORD_LENGTH = 5
